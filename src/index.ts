@@ -1,8 +1,14 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
-import bodyParser from 'body-parser';
 import cors from 'cors';
-import { Sequelize } from 'sequelize';
+import sequelize from "./middleware/sequelize";
 import process from 'process';
+import UserRoutes from './route/user-route';
+import ItemRoutes from "./route/item-route";
+import bodyParser from 'body-parser'; // Import body-parser
+
+
 
 const app = express();
 
@@ -10,21 +16,10 @@ app.use(cors({
     origin: '*'
 }));
 
-// app.use(bodyParser.json());
-
-const sequelize = new Sequelize({
-    dialect: 'mysql',
-    host: process.env.MYSQL_HOST || 'localhost',
-    username: process.env.MYSQL_USER || 'root',
-    password: process.env.MYSQL_PASSWORD || '1234',
-    database: process.env.MYSQL_DATABASE || 'di_backend',
-    dialectOptions: {
-        createDatabaseIfNotExist: true
-    }
-});
+app.use(bodyParser.json()); // Use body-parser middleware
 
 // Start the server
-const port = process.env.PORT || 8081;
+const port = process.env.PORT;
 app.listen(port, async () => {
     console.log(`Server started on port ${port}`);
     try {
@@ -36,3 +31,7 @@ app.listen(port, async () => {
         console.error('Unable to connect to the database:', error);
     }
 });
+
+
+app.use('/user', UserRoutes); // Use correct route path
+app.use('/item', ItemRoutes); // Use correct route path

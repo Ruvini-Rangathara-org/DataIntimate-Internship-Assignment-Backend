@@ -1,29 +1,6 @@
 import { DataTypes } from 'sequelize';
-import sequelize from './';
-
-const User = sequelize.define('User', {
-    username: {
-        type: DataTypes.STRING,
-        primaryKey: true,
-        allowNull: false,
-    },
-    fName: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    lName: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-});
+import sequelize from "../middleware/sequelize";
+import User from "./user-model";
 
 // Define Item model for MySQL
 const Item = sequelize.define('Item', {
@@ -45,18 +22,18 @@ const Item = sequelize.define('Item', {
         type: DataTypes.DOUBLE,
         allowNull: false,
     },
-    userId: {
+    username: {
         type: DataTypes.STRING, // Foreign key to match User's primaryKey
         allowNull: false,
         references: {
-            model: 'User',
+            model: 'Users',
             key: 'username',
         },
     },
 });
 
 // Define the relationship between User and Item
-User.hasMany(Item, { foreignKey: 'userId' });
-Item.belongsTo(User, { foreignKey: 'userId' });
+User.hasMany(Item, { foreignKey: 'username' }); // Define the association from User to Item
+Item.belongsTo(User, { foreignKey: 'username' }); // Define the association from Item to User
 
-export { User, Item };
+export default Item;
