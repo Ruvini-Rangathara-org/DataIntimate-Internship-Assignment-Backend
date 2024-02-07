@@ -8,6 +8,12 @@ import UserModel from "../model/user-model";
 import {Request, Response} from "express";
 import {Model} from "sequelize";
 
+
+interface AuthRequestBody {
+    username: string;
+    password: string;
+}
+
 //get all users
 export const getAllUser = async (req: express.Request, res: express.Response) => {
     try {
@@ -20,7 +26,6 @@ export const getAllUser = async (req: express.Request, res: express.Response) =>
         res.status(100).send("Error")
     }
 }
-
 
 // Create new user
 export const createNewUser = async (req: express.Request, res: express.Response) => {
@@ -61,13 +66,6 @@ export const createNewUser = async (req: express.Request, res: express.Response)
         return res.status(500).send("Error");
     }
 };
-
-
-// Authenticate user
-interface AuthRequestBody {
-    username: string;
-    password: string;
-}
 
 
 // Authenticate user function
@@ -135,3 +133,30 @@ export const deleteUser = async (req: Request, res: Response) => {
         return res.status(500).send(new CustomResponse(500, "Error"));
     }
 };
+
+//update user
+export const updateUser = async (req: Request, res: Response) => {
+    try {
+        console.log("===================================================================================");
+
+        const token = req.headers.authorization?.split(' ')[1]; // Assuming token is sent in the
+        const decoded: any = jwt.decode(token!);
+        const userId = decoded.user.username;
+
+        const req_body: any = req.body;
+        console.log("req_body:", JSON.stringify(req_body));
+
+        try {
+            await User.update(req_body, { where: { username: userId } });
+            return res.status(200).send(new CustomResponse(200, "User updated successfully"));
+        } catch (error) {
+            console.error("Error updating user:", error);
+            return res.status(500).send(new CustomResponse(500, "Failed to update user"));
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).send(new CustomResponse(500, "Error"));
+
+    }
+}
+
