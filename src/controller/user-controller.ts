@@ -3,9 +3,9 @@ import CustomResponse from "../dto/custom-response";
 import User from "../model/user-model";
 import bcrypt from "bcryptjs";
 import process from "process";
-import jwt, { Secret } from "jsonwebtoken";
+import jwt, {Secret} from "jsonwebtoken";
 import UserModel from "../model/user-model";
-import { Request, Response } from "express";
+import {Request, Response} from "express";
 import {Model} from "sequelize";
 
 //get all users
@@ -20,8 +20,6 @@ export const getAllUser = async (req: express.Request, res: express.Response) =>
         res.status(100).send("Error")
     }
 }
-
-
 
 
 // Create new user
@@ -65,18 +63,18 @@ export const createNewUser = async (req: express.Request, res: express.Response)
 };
 
 
-
 // Authenticate user
 interface AuthRequestBody {
     username: string;
     password: string;
 }
 
+
 // Authenticate user function
 export const authUser = async (req: Request, res: Response) => {
     try {
-        const { username, password }: AuthRequestBody = req.body;
-        const user: Model<any> | null = await UserModel.findOne({ where: { username } });
+        const {username, password}: AuthRequestBody = req.body;
+        const user: Model<any> | null = await UserModel.findOne({where: {username}});
 
         if (user) {
             const p = user.get('password');
@@ -86,10 +84,10 @@ export const authUser = async (req: Request, res: Response) => {
                 console.log("Password matched");
                 const expiresIn = '1w';
                 const secret = process.env.SECRET as Secret;
-                jwt.sign({ user }, secret, { expiresIn }, (err: any, token: any) => {
+                jwt.sign({user}, secret, {expiresIn}, (err: any, token: any) => {
                     if (err) {
                         console.error("Failed to generate token:", err);
-                        return res.status(500).send(new CustomResponse(500, "Failed to generate token : ",err));
+                        return res.status(500).send(new CustomResponse(500, "Failed to generate token : ", err));
                     }
 
                     // If token is generated successfully, send success response with token and user data
@@ -112,5 +110,28 @@ export const authUser = async (req: Request, res: Response) => {
         // If any error occurs, log the error and send a generic error response
         console.error("Error:", error);
         return res.status(500).send("Error");
+    }
+};
+
+//delete user
+export const deleteUser = async (req: Request, res: Response) => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1]; // Assuming token is sent in the format "Bearer <token>"
+        console.log("token:", token);
+
+        const decoded: any = jwt.decode(token!);
+        const userId = decoded.user.username;
+        console.log("userId:", userId);
+
+        try {
+            await User.destroy({ where: { username: userId } });
+            return res.status(200).send(new CustomResponse(200, "User deleted successfully"));
+        } catch (error) {
+            console.error("Error deleting user:", error);
+            return res.status(500).send(new CustomResponse(500, "Failed to delete user"));
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).send(new CustomResponse(500, "Error"));
     }
 };
