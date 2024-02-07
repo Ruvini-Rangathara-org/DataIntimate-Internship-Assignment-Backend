@@ -62,3 +62,22 @@ export const createNewItem = async (req: express.Request, res: express.Response)
         );
     }
 }
+
+//delete item
+export const deleteItem = async (req: express.Request, res: express.Response) => {
+    try {
+        const itemId = req.params.itemId;
+        console.log("itemId:", itemId);
+
+        try {
+            await Item.destroy({ where: { item_id: itemId } });
+            return res.status(200).send(new CustomResponse(200, "Item deleted successfully"));
+        } catch (error) {
+            console.error("Error deleting item:", error);
+            return res.status(500).send(new CustomResponse(500, "Failed to delete item"));
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).send(new CustomResponse(500, "Error"));
+    }
+};
