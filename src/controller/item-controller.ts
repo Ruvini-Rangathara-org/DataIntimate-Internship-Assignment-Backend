@@ -100,3 +100,24 @@ export const updateItem = async (req: express.Request, res: express.Response) =>
         return res.status(500).send(new CustomResponse(500, "Error"));
     }
 }
+
+//search item
+export const searchItem = async (req: express.Request, res: express.Response) => {
+    try {
+        const item_id = req.body.id;
+        console.log("item id :", item_id);
+
+        try {
+            let items = await Item.findAll({ where: item_id });
+            console.log(JSON.stringify(items))
+            res.status(200).send(
+                new CustomResponse(200, "Items are found successfully", items)
+            );
+        } catch (error) {
+            res.status(100).send("Error")
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).send(new CustomResponse(500, "Error"));
+    }
+}
