@@ -66,7 +66,7 @@ export const createNewItem = async (req: express.Request, res: express.Response)
 //delete item
 export const deleteItem = async (req: express.Request, res: express.Response) => {
     try {
-        const itemId = req.params.itemId;
+        const itemId = req.params.id;
         console.log("itemId:", itemId);
 
         try {
@@ -81,3 +81,4 @@ export const deleteItem = async (req: express.Request, res: express.Response) =>
         return res.status(500).send(new CustomResponse(500, "Error"));
     }
 };
+

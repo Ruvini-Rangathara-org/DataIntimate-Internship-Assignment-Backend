@@ -4,7 +4,8 @@ import * as middleware from "../middleware/index";
 
 const router = express.Router();
 
-router.get('/all', ItemController.getAllItem)
+router.get('/all',middleware.verifyToken, ItemController.getAllItem)
 router.post('/add',middleware.verifyToken, ItemController.createNewItem)
+router.delete('/delete/:id',middleware.verifyToken, ItemController.deleteItem)
 
 export default router;
