@@ -67,7 +67,6 @@ export const createNewUser = async (req: express.Request, res: express.Response)
     }
 };
 
-
 // Authenticate user function
 export const authUser = async (req: Request, res: Response) => {
     try {
@@ -160,3 +159,19 @@ export const updateUser = async (req: Request, res: Response) => {
     }
 }
 
+//search user
+export const searchUser = async (req: Request, res: Response) => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1]; // Assuming token is sent in the
+        const decoded: any = jwt.decode(token!);
+        const userId = decoded.user.username;
+
+        const users = await User.findAll({ where: { username: userId } });
+        console.log("users:", JSON.stringify(users));
+
+        return res.status(200).send(new CustomResponse(200, "Users are found successfully", users));
+    } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).send(new CustomResponse(500, "Error"));
+    }
+}
