@@ -7,5 +7,7 @@ const router = express.Router();
 router.get('/all',middleware.verifyToken, ItemController.getAllItem)
 router.post('/add',middleware.verifyToken, ItemController.createNewItem)
 router.delete('/delete/:id',middleware.verifyToken, ItemController.deleteItem)
+router.put('/update',middleware.verifyToken, ItemController.updateItem)
+
 
 export default router;

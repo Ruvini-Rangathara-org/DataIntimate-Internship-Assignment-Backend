@@ -82,3 +82,21 @@ export const deleteItem = async (req: express.Request, res: express.Response) =>
     }
 };
 
+//update item
+export const updateItem = async (req: express.Request, res: express.Response) => {
+    try {
+        const req_body: any = req.body;
+        console.log("req_body:", JSON.stringify(req_body));
+
+        try {
+            await Item.update(req_body, { where: { item_id: req_body.item_id } });
+            return res.status(200).send(new CustomResponse(200, "Item updated successfully"));
+        } catch (error) {
+            console.error("Error updating item:", error);
+            return res.status(500).send(new CustomResponse(500, "Failed to update item"));
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).send(new CustomResponse(500, "Error"));
+    }
+}
